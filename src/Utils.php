@@ -35,6 +35,11 @@ class Utils
         return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
+    /**
+     * @param int|null $timestamp
+     *
+     * @return false|string
+     */
     public static function getIso8601Time($timestamp = null)
     {
         if ($timestamp === null) {

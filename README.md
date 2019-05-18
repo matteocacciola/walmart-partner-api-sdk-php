@@ -7,11 +7,11 @@ This library provides an easy to use interface to [Walmart's Partner APIs](https
 ## Installation
 It is easiest to use [Composer](https://getcomposer.org/) to install, simply run:
 
-    composer require fillup/walmart-partner-api-sdk-php:^1.0.9
+    composer require matteocacciola/walmart-partner-api-sdk-php:^1.0.9
 
 Or add to the ```require``` section of your ```composer.json``` file:
 
-    "fillup/walmart-partner-api-sdk-php": "^1.0.9"
+    "matteocacciola/walmart-partner-api-sdk-php": "^1.0.9"
 
 ## Usage Documentation
  See [docs/README.md](docs/README.md)

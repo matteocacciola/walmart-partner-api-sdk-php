@@ -19,10 +19,7 @@ class Item extends BaseClient
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
     {
-        // Apply some defaults.
-        $config += [
-            'description_path' => __DIR__ . '/descriptions/item.php',
-        ];
+        $this->descriptionPath = __DIR__ . '/descriptions/item.php';
 
         // Create the client.
         parent::__construct(

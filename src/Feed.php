@@ -16,16 +16,12 @@ class Feed extends BaseClient
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
     {
-        // Apply some defaults.
-        $config += [
-            'description_path' => __DIR__ . '/descriptions/feed.php',
-        ];
+        $this->descriptionPath = __DIR__ . '/descriptions/feed.php';
 
         // Create the client.
         parent::__construct(
             $config,
             $env
         );
-
     }
 }

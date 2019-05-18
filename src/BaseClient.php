@@ -1,6 +1,8 @@
 <?php
+
 namespace Walmart;
 
+use http\Env\Response;
 use Walmart\middleware\AuthSubscriber;
 use Walmart\middleware\MockSubscriber;
 use Walmart\middleware\XmlNamespaceSubscriber;
@@ -24,25 +26,40 @@ class BaseClient extends GuzzleClient
 
     public $env;
 
+    protected $wmConsumerChannelType;
+    protected $country;
+
+    protected $descriptionPath;
+
     /**
      * @param array $config
      * @param string $env
+     *
      * @throws \Exception
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
     {
+        // Apply some defaults.
+        $this->wmConsumerChannelType = $config['wmConsumerChannelType'];
+        if (isset($config['country'])) {
+            $this->country = ($config['country'] == 'ca') ? 'ca' : '';
+            unset($config['country']);
+        } else {
+            $this->country = '';
+        }
+
         /*
          * Make sure ENV is valid
          */
-        if ( ! in_array($env, [self::ENV_PROD, self::ENV_STAGE, self::ENV_MOCK])) {
+        if (!in_array($env, [self::ENV_PROD, self::ENV_STAGE, self::ENV_MOCK])) {
             throw new \Exception('Invalid environment', 1462566788);
         }
 
         /*
          * Check that consumerId and privateKey are set
          */
-        if ( ! isset($config['consumerId']) || ! isset($config['privateKey'])) {
-            throw new \Exception('Configuration missing consumerId or privateKey', 1466965269);
+        if (!isset($config['consumerId']) || !isset($config['privateKey']) || !isset($config['wmConsumerChannelType'])) {
+            throw new \Exception('Configuration missing consumerId or privateKey or wmConsumerChannelType', 401);
         }
 
         // Set ENV
@@ -50,20 +67,25 @@ class BaseClient extends GuzzleClient
 
         // Apply some defaults.
         $config = array_merge_recursive($config, [
+            'description_path' => $this->descriptionPath,
             'max_retries' => 3,
             'http_client_options' => [
                 'defaults' => [
                     'auth' => [
                         $config['consumerId'],
                         $config['privateKey']
-                    ]
+                    ],
+                    'headers' => [
+                        'WM_CONSUMER.CHANNEL.TYPE' => $this->wmConsumerChannelType,
+                    ],
                 ],
             ],
+            'baseUrl' => $this->getEnvBaseUrl($env),
         ]);
 
         // If an override base url is not provided, determine proper baseurl from env
-        if ( ! isset($config['description_override']['baseUrl'])) {
-            $config = array_merge_recursive($config , [
+        if (!isset($config['description_override']['baseUrl'])) {
+            $config = array_merge_recursive($config, [
                 'description_override' => [
                     'baseUrl' => $this->getEnvBaseUrl($env),
                 ],
@@ -82,19 +104,20 @@ class BaseClient extends GuzzleClient
             'defaults/ApiVersion',
             $this->getDescription()->getApiVersion()
         );
-
     }
 
     /**
      * Get baseUrl for given environment
+     *
      * @param string $env
+     *
      * @return null|string
      */
     public function getEnvBaseUrl($env)
     {
         switch ($env) {
             case self::ENV_PROD:
-                return self::BASE_URL_PROD;
+                return self::BASE_URL_PROD . DIRECTORY_SEPARATOR . $this->country;
             case self::ENV_STAGE:
                 return self::BASE_URL_STAGE;
             case self::ENV_MOCK:
@@ -102,6 +125,11 @@ class BaseClient extends GuzzleClient
         }
     }
 
+    /**
+     * @param array $config
+     *
+     * @return HttpClient|mixed
+     */
     private function getHttpClientFromConfig(array $config)
     {
         // If a client was provided, return it.
@@ -128,13 +156,19 @@ class BaseClient extends GuzzleClient
         /*
          * If mock env, attach MockSubscriber
          */
-        if($this->env === self::ENV_MOCK) {
+        if ($this->env === self::ENV_MOCK) {
             $client->getEmitter()->attach(new MockSubscriber());
         }
 
         return $client;
     }
 
+    /**
+     * @param array $config
+     *
+     * @return Description|mixed
+     * @throws \Exception
+     */
     private function getDescriptionFromConfig(array $config)
     {
         // If a description was provided, return it.
@@ -147,12 +181,12 @@ class BaseClient extends GuzzleClient
             ? include $config['description_path']
             : [];
 
-        if ( ! is_array($data)) {
+        if (!is_array($data)) {
             throw new \Exception('Service description file must return an array', 1470529124);
         }
 
         // Override description from local config if set
-        if(isset($config['description_override'])){
+        if (isset($config['description_override'])) {
             $data = array_merge($data, $config['description_override']);
         }
 

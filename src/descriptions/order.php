@@ -1,5 +1,4 @@
 <?php return [
-    'baseUrl' => 'https://marketplace.walmartapis.com',
     'apiVersion' => 'v3',
     'operations' => [
         'PrivateListReleased' => [

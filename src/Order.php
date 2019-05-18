@@ -8,7 +8,7 @@ use GuzzleHttp\Message\ResponseInterface;
 /**
  * Partial Walmart API client implemented with Guzzle.
  *
- * @method  array list(array $config = [])
+ * @method array list(array $config = [])
  * @method array get(array $config = [])
  * @method array acknowledge(array $config = [])
  */
@@ -21,8 +21,6 @@ class Order extends BaseClient
 
     const CANCEL_REASON = 'CANCEL_BY_SELLER';
 
-    public $wmConsumerChannelType;
-
     /**
      * @param array $config
      * @param string $env
@@ -30,30 +28,17 @@ class Order extends BaseClient
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
     {
-        if ( ! isset($config['wmConsumerChannelType'])) {
+        if (!isset($config['wmConsumerChannelType'])) {
             throw new \Exception('wmConsumerChannelType is required in configuration for Order APIs', 1467486702);
         }
 
-        $this->wmConsumerChannelType = $config['wmConsumerChannelType'];
-
-        // Apply some defaults.
-        $config = array_merge_recursive($config, [
-            'description_path' => __DIR__ . '/descriptions/order.php',
-            'http_client_options' => [
-                'defaults' => [
-                    'headers' => [
-                        'WM_CONSUMER.CHANNEL.TYPE' => $this->wmConsumerChannelType,
-                    ],
-                ],
-            ],
-        ]);
+        $this->descriptionPath = __DIR__ . '/descriptions/order.php';
 
         // Create the client.
         parent::__construct(
             $config,
             $env
         );
-
     }
 
     public function __call($name, array $arguments)
@@ -85,7 +70,7 @@ class Order extends BaseClient
                  */
                 /** @var ResponseInterface $response */
                 $response = $e->getResponse();
-                if (strval($response->getStatusCode()) === '404') {
+                if ((string) $response->getStatusCode() === '404') {
                     return [
                         'statusCode' => 200,
                         'list' => [
@@ -121,7 +106,7 @@ class Order extends BaseClient
                  */
                 /** @var ResponseInterface $response */
                 $response = $e->getResponse();
-                if (strval($response->getStatusCode()) === '404') {
+                if ((string) $response->getStatusCode() === '404') {
                     return [
                         'statusCode' => 200,
                         'list' => [
@@ -138,7 +123,6 @@ class Order extends BaseClient
             }
         }
     }
-
 
     /**
      * Cancel an order

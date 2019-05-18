@@ -1,4 +1,5 @@
 <?php
+
 namespace Walmart;
 
 use fillup\A2X;
@@ -17,10 +18,7 @@ class Inventory extends BaseClient
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
     {
-        // Apply some defaults.
-        $config += [
-            'description_path' => __DIR__ . '/descriptions/inventory.php',
-        ];
+        $this->descriptionPath = __DIR__ . '/descriptions/inventory.php';
 
         // Create the client.
         parent::__construct(
@@ -32,13 +30,13 @@ class Inventory extends BaseClient
 
     /**
      * @param array $inventory
+     *
      * @return array
      * @throws \Exception
      */
     public function update($inventory)
     {
-
-        if ( ! is_array($inventory)) {
+        if (!is_array($inventory)) {
             throw new \Exception('Inventory must be an array', 1470529303);
         }
 
@@ -55,7 +53,7 @@ class Inventory extends BaseClient
         $a2x = new A2X($inventory, $schema);
         $xml = $a2x->asXml();
 
-        if ( ! isset($inventory['inventory']['sku'])) {
+        if (!isset($inventory['inventory']['sku'])) {
             throw new \Exception("The element ['inventory']['sku'] must be set", 1470529425);
         }
 
@@ -63,17 +61,17 @@ class Inventory extends BaseClient
             'sku' => $inventory['inventory']['sku'],
             'inventory' => $xml,
         ]);
-
     }
 
     /**
      * @param array $items
+     *
      * @return array
      * @throws \Exception
      */
     public function bulk($items)
     {
-        if ( ! is_array($items)) {
+        if (!is_array($items)) {
             throw new \Exception('Items is not an array', 14663491774);
         }
 
