@@ -44,8 +44,6 @@ class BaseClient extends GuzzleClient
         if (isset($config['country'])) {
             $this->country = ($config['country'] == 'ca') ? 'ca' : '';
             unset($config['country']);
-        } else {
-            $this->country = '';
         }
 
         /*
@@ -104,6 +102,14 @@ class BaseClient extends GuzzleClient
             'defaults/ApiVersion',
             $this->getDescription()->getApiVersion()
         );
+
+        if ($this->country) {
+            // Ensure that ApiVersion is set.
+            $this->setConfig(
+                'defaults/Country',
+                $this->country
+            );
+        }
     }
 
     /**
@@ -117,7 +123,7 @@ class BaseClient extends GuzzleClient
     {
         switch ($env) {
             case self::ENV_PROD:
-                return self::BASE_URL_PROD . DIRECTORY_SEPARATOR . $this->country;
+                return self::BASE_URL_PROD;
             case self::ENV_STAGE:
                 return self::BASE_URL_STAGE;
             case self::ENV_MOCK:
@@ -185,6 +191,10 @@ class BaseClient extends GuzzleClient
             throw new \Exception('Service description file must return an array', 1470529124);
         }
 
+        if ($this->country) {
+            $this->updateDataWithCountry($data);
+        }
+
         // Override description from local config if set
         if (isset($config['description_override'])) {
             $data = array_merge($data, $config['description_override']);
@@ -193,4 +203,20 @@ class BaseClient extends GuzzleClient
         return new Description($data);
     }
 
+    /**
+     * @param $data
+     */
+    private function updateDataWithCountry(&$data)
+    {
+        $data['country'] = $this->country;
+        foreach ($data['operations'] as $key => &$operation) {
+            $operation['uri'] = DIRECTORY_SEPARATOR . '{Country}' . $operation['uri'];
+
+            $operation['parameters']['Country'] = [
+                'required' => true,
+                'type' => 'string',
+                'location' => 'uri',
+            ];
+        }
+    }
 }
