@@ -2,11 +2,9 @@
 
 namespace Walmart;
 
-use http\Env\Response;
 use Walmart\middleware\AuthSubscriber;
 use Walmart\middleware\MockSubscriber;
 use Walmart\middleware\XmlNamespaceSubscriber;
-
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Command\Guzzle\GuzzleClient;
 use GuzzleHttp\Command\Guzzle\Description;

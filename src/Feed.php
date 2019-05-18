@@ -24,4 +24,25 @@ class Feed extends BaseClient
             $env
         );
     }
+
+    /**
+     * @return array
+     */
+    public function listAll()
+    {
+        $limit = 20;
+        $offset = 0;
+        $continue = true;
+        $feeds = [];
+        do {
+            try {
+                $feeds[] = $this->list(['limit' => $limit, 'offset' => $offset]);
+                $offset += $limit;
+            } catch (\Exception $ex) {
+                $continue = false;
+            }
+        } while ($continue);
+
+        return $feeds;
+    }
 }

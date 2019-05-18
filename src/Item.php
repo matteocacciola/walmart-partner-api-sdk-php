@@ -56,4 +56,25 @@ class Item extends BaseClient
             'file' => $file,
         ]);
     }
+
+    /**
+     * @return array
+     */
+    public function listAll()
+    {
+        $limit = 20;
+        $offset = 0;
+        $continue = true;
+        $items = [];
+        do {
+            try {
+                $items[] = $this->list(['limit' => $limit, 'offset' => $offset]);
+                $offset += $limit;
+            } catch (\Exception $ex) {
+                $continue = false;
+            }
+        } while ($continue);
+
+        return $items;
+    }
 }
