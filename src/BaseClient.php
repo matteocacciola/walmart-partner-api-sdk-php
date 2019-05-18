@@ -210,7 +210,11 @@ class BaseClient extends GuzzleClient
     {
         $data['country'] = $this->country;
         foreach ($data['operations'] as $key => &$operation) {
-            $operation['uri'] = DIRECTORY_SEPARATOR . '{Country}' . $operation['uri'];
+            $position = strpos($operation['uri'], '{ApiVersion}') + strlen('{ApiVersion}');
+
+            $operation['uri'] = substr($operation['uri'], 0, $position)
+                . DIRECTORY_SEPARATOR . '{Country}' . substr($operation['uri'], $position)
+            ;
 
             $operation['parameters']['Country'] = [
                 'required' => true,
