@@ -26,9 +26,12 @@ class Feed extends BaseClient
     }
 
     /**
+     * @param array $config
+     * @param string $env
+     *
      * @return array
      */
-    public function listAll()
+    public static function listAll(array $config = [], $env = self::ENV_PROD)
     {
         $limit = 20;
         $offset = 0;
@@ -36,7 +39,8 @@ class Feed extends BaseClient
         $feeds = [];
         do {
             try {
-                $feeds[] = $this->list(['limit' => $limit, 'offset' => $offset]);
+                $client = new self($config, $env);
+                $feeds[] = $client->list(['limit' => $limit, 'offset' => $offset]);
                 $offset += $limit;
             } catch (\Exception $ex) {
                 $continue = false;

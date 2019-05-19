@@ -22,11 +22,11 @@ Currently 100% (19 of 19) are supported by this SDK
 | Object    | Operation                     | SDK Class -> Method   | Unit / Int Tested   | API Docs |
 |-----------|-------------------------------|-----------------------|---------------------|----------|
 | Feeds     | Get all feed statuses         | Feed -> List          | Yes / Yes           |https://developer.walmartapis.com/#get-all-feed-statuses         |
-|           | Get feed statuses (no pag.)   | Feed -> ListAll       | Yes / Yes           |                                                                 |
+|           | Get feed statuses (no pag.)   | Feed :: ListAll       | Yes / Yes           |                                                                 |
 |           | Get a feedItems status        | Feed -> GetFeedItem   | Yes / Yes           |https://developer.walmartapis.com/#get-a-feeditems-status        |
 |           | Get a feed status             | Feed -> Get           | Yes / Yes           |https://developer.walmartapis.com/#get-a-feed-status             |
 | Items     | Get all items                 | Item -> List          | Yes / Yes           |https://developer.walmartapis.com/#get-all-items                 |
-|           | Get all items (no pagination) | Item -> ListAll       | Yes / Yes           |                                                                 |
+|           | Get all items (no pagination) | Item :: ListAll       | Yes / Yes           |                                                                 |
 |           | Get an item                   | Item -> Get           | Yes / Yes           |https://developer.walmartapis.com/#get-an-item                   |
 |           | Retire an item                | Item -> Retire        | Yes / Yes           |https://developer.walmartapis.com/#retire-an-item                |
 |           | Bulk create/update items      | Item -> Bulk          | Yes / Yes           |https://developer.walmartapis.com/#bulk-createupdate-items       |
