@@ -73,29 +73,6 @@ class FeedTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetFeedItem()
-    {
-        $client = $this->getClient();
-        try {
-            $feed = $client->getFeedItem([
-                'feedId' => '09a3f1b2-3852-4b87-b7e4-2715b3d7a52e',
-                'includeDetails' => 'true',
-                'limit' => 3,
-            ]);
-            $this->debug($feed);
-
-            $this->assertEquals(200, $feed['statusCode']);
-            $this->assertEquals('INPROGRESS', $feed['meta']['feedStatus']);
-            $this->assertEquals(3, count($feed['elements']['itemDetails']['itemIngestionStatus']));
-
-        } catch (CommandClientException $e) {
-            $error = $e->getResponse()->getHeader('X-Error');
-            $this->fail($e->getMessage() . 'Error: ' . $error);
-        } catch (\Exception $e) {
-            $this->fail($e->getMessage());
-        }
-    }
-
     private function getClient($extraConfig = [])
     {
         $config = array_merge_recursive($this->config, $extraConfig);
