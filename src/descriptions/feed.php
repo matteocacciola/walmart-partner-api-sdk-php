@@ -53,7 +53,7 @@
                     'required' => false,
                     'type' => 'integer',
                     'location' => 'query',
-                    'maximum' => 50,
+                    'maximum' => 1000,
                 ],
                 'offset' => [
                     'required' => false,
@@ -78,39 +78,6 @@
                     'location' => 'query',
                     'default' => 'CONTENT_PRODUCT'
                 ]
-            ],
-        ],
-        'GetFeedItem' => [
-            'httpMethod' => 'GET',
-            'uri' => '/{ApiVersion}/feeds/feeditems/{feedId}?{+nextCursor}',
-            'responseModel' => 'Result',
-            'parameters' => [
-                'ApiVersion' => [
-                    'required' => true,
-                    'type'     => 'string',
-                    'location' => 'uri',
-                ],
-                'feedId' => [
-                    'required' => true,
-                    'type' => 'string',
-                    'location' => 'uri',
-                ],
-                'includeDetails' => [
-                    'required' => false,
-                    'type' => 'string',
-                    'location' => 'query',
-                ],
-                'limit' => [
-                    'required' => false,
-                    'type' => 'integer',
-                    'location' => 'query',
-                    'maximum' => 50,
-                ],
-                'nextCursor' => [
-                    'required' => false,
-                    'type' => 'string',
-                    'location' => 'uri',
-                ],
             ],
         ],
     ],
