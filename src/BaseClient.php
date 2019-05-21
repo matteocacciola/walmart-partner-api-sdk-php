@@ -123,9 +123,8 @@ class BaseClient extends GuzzleClient
             case self::ENV_PROD:
                 return self::BASE_URL_PROD;
             case self::ENV_STAGE:
-                return self::BASE_URL_STAGE;
             case self::ENV_MOCK:
-                return null;
+                return self::BASE_URL_STAGE;
         }
     }
 
