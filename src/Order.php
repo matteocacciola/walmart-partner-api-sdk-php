@@ -1,4 +1,5 @@
 <?php
+
 namespace Walmart;
 
 use fillup\A2X;
@@ -24,6 +25,7 @@ class Order extends BaseClient
     /**
      * @param array $config
      * @param string $env
+     *
      * @throws \Exception
      */
     public function __construct(array $config = [], $env = self::ENV_PROD)
@@ -49,12 +51,15 @@ class Order extends BaseClient
         if ($name === 'list') {
             return $this->listAll($arguments[0]);
         }
+
         return parent::__call($name, $arguments);
     }
 
     /**
      * List released orders
+     *
      * @param array $config
+     *
      * @return array
      * @throws \Exception
      */
@@ -70,7 +75,55 @@ class Order extends BaseClient
                  */
                 /** @var ResponseInterface $response */
                 $response = $e->getResponse();
-                if ((string) $response->getStatusCode() === '404') {
+                if ((string)$response->getStatusCode() === '404') {
+                    return [
+                        'statusCode' => 200,
+                        'list' => [
+                            'meta' => [
+                                'totalCount' => 0
+                            ]
+                        ],
+                        'elements' => []
+                    ];
+                }
+                throw $e;
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function listReleasedWithAllCursors(array $config = [])
+    {
+        try {
+            $response = $this->listReleased($config);
+
+            $arrResponses[] = $response;
+            if (isset($response['meta']['nextCursor'])) {
+                do {
+                    $config['nextCursor'] = $response['meta']['nextCursor'];
+
+                    $response = $this->listReleased($config);
+                    $arrResponses[] = $response;
+                } while (isset($response['meta']['nextCursor']));
+            }
+
+            return $this->retrieveFinalResponseFromAllCursors($arrResponses);
+        } catch (\Exception $e) {
+            if ($e instanceof RequestException) {
+                /*
+                 * ListReleased and List return 404 error if no results are found, even for successful API calls,
+                 * So if result status is 404, transform to 200 with empty results.
+                 */
+                /** @var ResponseInterface $response */
+                $response = $e->getResponse();
+                if ((string)$response->getStatusCode() === '404') {
                     return [
                         'statusCode' => 200,
                         'list' => [
@@ -90,7 +143,9 @@ class Order extends BaseClient
 
     /**
      * List all orders
+     *
      * @param array $config
+     *
      * @return array
      * @throws \Exception
      */
@@ -106,7 +161,55 @@ class Order extends BaseClient
                  */
                 /** @var ResponseInterface $response */
                 $response = $e->getResponse();
-                if ((string) $response->getStatusCode() === '404') {
+                if ((string)$response->getStatusCode() === '404') {
+                    return [
+                        'statusCode' => 200,
+                        'list' => [
+                            'meta' => [
+                                'totalCount' => 0
+                            ]
+                        ],
+                        'elements' => []
+                    ];
+                }
+                throw $e;
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function listAllWithAllCursors(array $config = [])
+    {
+        try {
+            $response = $this->listAll($config);
+
+            $arrResponses[] = $response;
+            if (isset($response['meta']['nextCursor'])) {
+                do {
+                    $config['nextCursor'] = $response['meta']['nextCursor'];
+
+                    $response = $this->listAll($config);
+                    $arrResponses[] = $response;
+                } while (isset($response['meta']['nextCursor']));
+            }
+
+            return $this->retrieveFinalResponseFromAllCursors($arrResponses);
+        } catch (\Exception $e) {
+            if ($e instanceof RequestException) {
+                /*
+                 * ListReleased and List return 404 error if no results are found, even for successful API calls,
+                 * So if result status is 404, transform to 200 with empty results.
+                 */
+                /** @var ResponseInterface $response */
+                $response = $e->getResponse();
+                if ((string)$response->getStatusCode() === '404') {
                     return [
                         'statusCode' => 200,
                         'list' => [
@@ -126,15 +229,17 @@ class Order extends BaseClient
 
     /**
      * Cancel an order
+     *
      * @param string $purchaseOrderId
      * @param array $order
+     *
      * @return array
      * @throws \Exception
      */
     public function cancel($purchaseOrderId, $order)
     {
-        if(!is_numeric($purchaseOrderId)){
-            throw new \Exception("purchaseOrderId must be numeric",1448480746);
+        if (!is_numeric($purchaseOrderId)) {
+            throw new \Exception("purchaseOrderId must be numeric", 1448480746);
         }
 
         $schema = [
@@ -155,7 +260,7 @@ class Order extends BaseClient
 
         $a2x = new A2X($order, $schema);
         $xml = $a2x->asXml();
-        
+
         return $this->cancelOrder([
             'purchaseOrderId' => $purchaseOrderId,
             'order' => $xml,
@@ -164,15 +269,17 @@ class Order extends BaseClient
 
     /**
      * Ship an order
+     *
      * @param string $purchaseOrderId
      * @param array $order
+     *
      * @return array
      * @throws \Exception
      */
     public function ship($purchaseOrderId, $order)
     {
-        if(!is_numeric($purchaseOrderId)){
-            throw new \Exception("purchaseOrderId must be numeric",1448480750);
+        if (!is_numeric($purchaseOrderId)) {
+            throw new \Exception("purchaseOrderId must be numeric", 1448480750);
         }
 
         $schema = [
@@ -202,15 +309,17 @@ class Order extends BaseClient
 
     /**
      * Refund an order
+     *
      * @param string $purchaseOrderId
      * @param array $order
+     *
      * @return array
      * @throws \Exception
      */
     public function refund($purchaseOrderId, $order)
     {
-        if(!is_numeric($purchaseOrderId)){
-            throw new \Exception("purchaseOrderId must be numeric",1448480783);
+        if (!is_numeric($purchaseOrderId)) {
+            throw new \Exception("purchaseOrderId must be numeric", 1448480783);
         }
 
         $schema = [
@@ -239,5 +348,33 @@ class Order extends BaseClient
             'purchaseOrderId' => $purchaseOrderId,
             'order' => $xml,
         ]);
+    }
+
+    /**
+     * @param array $responses
+     *
+     * @return array
+     */
+    private function retrieveFinalResponseFromAllCursors(array $responses)
+    {
+        $finalResponse = [
+            'statusCode' => 200,
+            'meta' => [
+                'totalCount' => $responses[0]['meta']['totalCount']
+            ],
+            'elements' => [
+                'order' => []
+            ]
+        ];
+        $arrOrders = [];
+        foreach ($responses as $response) {
+            foreach ($response['elements']['order'] as $remoteOrder) {
+                $arrOrders[] = $remoteOrder;
+            }
+        }
+
+        $finalResponse['elements']['order'] = $arrOrders;
+
+        return $finalResponse;
     }
 }
