@@ -99,22 +99,26 @@ class Order extends BaseClient
      * @return array
      * @throws \Exception
      */
-    public function listReleasedWithAllCursors(array $config = [])
+    public static function listReleasedWithAllCursors(array $config = [])
     {
         try {
-            $response = $this->listReleased($config);
+            $config['limit'] = 200;
+            $client = new self($config);
+
+            $response = $client->listReleased($config);
 
             $arrResponses[] = $response;
             if (isset($response['meta']['nextCursor'])) {
                 do {
                     $config['nextCursor'] = $response['meta']['nextCursor'];
 
-                    $response = $this->listReleased($config);
+                    $client = new self($config);
+                    $response = $client->listReleased($config);
                     $arrResponses[] = $response;
                 } while (isset($response['meta']['nextCursor']));
             }
 
-            return $this->retrieveFinalResponseFromAllCursors($arrResponses);
+            return self::retrieveFinalResponseFromAllCursors($arrResponses);
         } catch (\Exception $e) {
             if ($e instanceof RequestException) {
                 /*
@@ -185,22 +189,26 @@ class Order extends BaseClient
      * @return array
      * @throws \Exception
      */
-    public function listAllWithAllCursors(array $config = [])
+    public static function listAllWithAllCursors(array $config = [])
     {
         try {
-            $response = $this->listAll($config);
+            $config['limit'] = 200;
+            $client = new self($config);
+
+            $response = $client->listAll($config);
 
             $arrResponses[] = $response;
             if (isset($response['meta']['nextCursor'])) {
                 do {
                     $config['nextCursor'] = $response['meta']['nextCursor'];
 
-                    $response = $this->listAll($config);
+                    $client = new self($config);
+                    $response = $client->listAll($config);
                     $arrResponses[] = $response;
                 } while (isset($response['meta']['nextCursor']));
             }
 
-            return $this->retrieveFinalResponseFromAllCursors($arrResponses);
+            return self::retrieveFinalResponseFromAllCursors($arrResponses);
         } catch (\Exception $e) {
             if ($e instanceof RequestException) {
                 /*
@@ -355,7 +363,7 @@ class Order extends BaseClient
      *
      * @return array
      */
-    private function retrieveFinalResponseFromAllCursors(array $responses)
+    private static function retrieveFinalResponseFromAllCursors(array $responses)
     {
         $finalResponse = [
             'statusCode' => 200,
