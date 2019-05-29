@@ -376,7 +376,13 @@ class Order extends BaseClient
         ];
         $arrOrders = [];
         foreach ($responses as $response) {
-            foreach ($response['elements']['order'] as $remoteOrder) {
+            $remoteOrders = $response['elements']['order'];
+
+            if (self::isAssociativeArray($remoteOrders)) {
+                $remoteOrders = [$remoteOrders];
+            }
+
+            foreach ($remoteOrders as $remoteOrder) {
                 $arrOrders[] = $remoteOrder;
             }
         }
@@ -384,5 +390,18 @@ class Order extends BaseClient
         $finalResponse['elements']['order'] = $arrOrders;
 
         return $finalResponse;
+    }
+
+    /**
+     * @param array $arr
+     *
+     * @return bool
+     */
+    private static function isAssociativeArray(array $arr) : bool
+    {
+        if ([] === $arr) {
+            return false;
+        }
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 }
