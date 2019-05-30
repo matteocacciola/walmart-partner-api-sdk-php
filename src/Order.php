@@ -246,8 +246,12 @@ class Order extends BaseClient
      */
     public function cancel($purchaseOrderId, $order)
     {
-        if (!is_numeric($purchaseOrderId)) {
-            throw new \Exception("purchaseOrderId must be numeric", 1448480746);
+        if (empty($purchaseOrderId)) {
+            throw new \Exception("purchaseOrderId cannot be empty", 1448480746);
+        }
+
+        if (empty($order)) {
+            throw new \Exception("$order cannot be empty", 1448480746);
         }
 
         $schema = [
@@ -286,8 +290,12 @@ class Order extends BaseClient
      */
     public function ship($purchaseOrderId, $order)
     {
-        if (!is_numeric($purchaseOrderId)) {
+        if (empty($purchaseOrderId)) {
             throw new \Exception("purchaseOrderId must be numeric", 1448480750);
+        }
+
+        if (empty($order)) {
+            throw new \Exception("$order cannot be empty", 1448480746);
         }
 
         $schema = [
@@ -326,8 +334,12 @@ class Order extends BaseClient
      */
     public function refund($purchaseOrderId, $order)
     {
-        if (!is_numeric($purchaseOrderId)) {
+        if (empty($purchaseOrderId)) {
             throw new \Exception("purchaseOrderId must be numeric", 1448480783);
+        }
+
+        if (empty($order)) {
+            throw new \Exception("$order cannot be empty", 1448480746);
         }
 
         $schema = [
