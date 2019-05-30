@@ -15,7 +15,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.5",
+        "php": ">=7",
         "guzzlehttp/guzzle": "^5.3",
         "fillup/guzzle-services": "0.5.1",
         "guzzlehttp/retry-subscriber": "^2.0.2",
