@@ -251,7 +251,7 @@ class Order extends BaseClient
         }
 
         if (empty($order)) {
-            throw new \Exception("$order cannot be empty", 1448480746);
+            throw new \Exception("Order array cannot be empty", 1448480746);
         }
 
         $schema = [
@@ -295,7 +295,7 @@ class Order extends BaseClient
         }
 
         if (empty($order)) {
-            throw new \Exception("$order cannot be empty", 1448480746);
+            throw new \Exception("Order array cannot be empty", 1448480746);
         }
 
         $schema = [
@@ -339,7 +339,7 @@ class Order extends BaseClient
         }
 
         if (empty($order)) {
-            throw new \Exception("$order cannot be empty", 1448480746);
+            throw new \Exception("Order array cannot be empty", 1448480746);
         }
 
         $schema = [
