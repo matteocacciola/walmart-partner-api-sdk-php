@@ -312,7 +312,7 @@ class Order extends BaseClient
                 'ns3' => 'http://walmart.com'
             ],
         ];
-        
+
         $a2x = new A2X($order, $schema);
         $xml = $a2x->asXml();
 
