@@ -300,8 +300,6 @@ class Order extends BaseClient
 
         $schema = [
             '/orderShipment' => [
-                'namespace' => 'ns3',
-                'childNamespace' => 'ns3',
             ],
             '/orderShipment/orderLines' => [
                 'sendItemsAs' => 'orderLine',
@@ -310,10 +308,11 @@ class Order extends BaseClient
                 'sendItemsAs' => 'orderLineStatus',
             ],
             '@namespaces' => [
-                'ns3' => 'http://walmart.com/mp/v3/orders'
+                'ns2' => 'http://walmart.com/mp/v3/orders',
+                'ns3' => 'http://walmart.com'
             ],
         ];
-
+        
         $a2x = new A2X($order, $schema);
         $xml = $a2x->asXml();
 
