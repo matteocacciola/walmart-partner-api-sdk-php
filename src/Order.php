@@ -300,6 +300,8 @@ class Order extends BaseClient
 
         $schema = [
             '/orderShipment' => [
+                'namespace' => 'ns3',
+                'childNamespace' => 'ns3',
             ],
             '/orderShipment/orderLines' => [
                 'sendItemsAs' => 'orderLine',
